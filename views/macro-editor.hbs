@@ -1,0 +1,48 @@
+<!DOCTYPE html>
+<html>
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>API Spec Documentation Editor</title>
+  <link rel="stylesheet" href="/css/styles.css">
+  <script src="https://connect-cdn.atl-paas.net/all.js"></script>
+</head>
+<body>
+  <div class="container">
+    <h1>API Spec Documentation Editor</h1>
+    
+    <div class="error-message" id="errorArea"></div>
+    
+    <form id="apiSpecForm">
+      <div class="form-group">
+        <label for="specInput">OpenAPI Specification (JSON or YAML)</label>
+        <textarea id="specInput" name="spec" placeholder="Paste your OpenAPI specification here"></textarea>
+      </div>
+      
+      <div class="form-group">
+        <label for="fileUpload">Upload OpenAPI Specification File</label>
+        <input type="file" id="fileUpload" name="fileUpload" class="file-upload" accept=".json,.yaml,.yml">
+        <p><small>Upload a JSON or YAML file containing your OpenAPI specification</small></p>
+      </div>
+      
+      <div class="form-group">
+        <label for="formatSelector">Format</label>
+        <select id="formatSelector" name="format">
+          <option value="json">JSON</option>
+          <option value="yaml">YAML</option>
+        </select>
+      </div>
+      
+      <div class="button-group">
+        <button id="previewButton" class="button button-secondary">Preview</button>
+        <button id="saveButton" class="button button-primary">Save</button>
+        <button id="cancelButton" class="button button-secondary">Cancel</button>
+      </div>
+    </form>
+    
+    <div class="preview-area" id="previewArea"></div>
+  </div>
+  
+  <script src="/js/macro-editor.js"></script>
+</body>
+</html>
