@@ -1,4 +1,4 @@
-modules = ["nodejs-20"]
+modules = ["nodejs-20", "java-17"]
 
 [nix]
 channel = "stable-24_05"
@@ -13,14 +13,10 @@ author = "agent"
 
 [[workflows.workflow.tasks]]
 task = "workflow.run"
-args = "Server"
-
-[[workflows.workflow.tasks]]
-task = "workflow.run"
-args = "confluence_plugin_server"
+args = "Compile"
 
 [[workflows.workflow]]
-name = "Server"
+name = "Compile"
 author = "agent"
 
 [workflows.workflow.metadata]
@@ -31,22 +27,7 @@ task = "packager.installForAll"
 
 [[workflows.workflow.tasks]]
 task = "shell.exec"
-args = "node index.js"
-waitForPort = 8000
-
-[[workflows.workflow]]
-name = "confluence_plugin_server"
-author = "agent"
-
-[workflows.workflow.metadata]
-agentRequireRestartOnSave = false
-
-[[workflows.workflow.tasks]]
-task = "packager.installForAll"
-
-[[workflows.workflow.tasks]]
-task = "shell.exec"
-args = "npm install && node index.js"
+args = "mvn clean compile"
 
 [deployment]
 run = ["sh", "-c", "node index.js"]

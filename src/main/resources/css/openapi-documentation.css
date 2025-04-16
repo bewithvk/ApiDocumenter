@@ -1,0 +1,327 @@
+/* OpenAPI Documentation Styles */
+
+.openapi-spec-container {
+    font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Oxygen, Ubuntu, "Fira Sans", "Droid Sans", "Helvetica Neue", sans-serif;
+    line-height: 1.5;
+    color: #172B4D;
+    margin: 0 0 20px 0;
+    padding: 10px;
+    border: 1px solid #DFE1E6;
+    border-radius: 3px;
+    background-color: #fff;
+}
+
+/* API Info Section */
+.api-info {
+    margin-bottom: 24px;
+    padding-bottom: 16px;
+    border-bottom: 1px solid #DFE1E6;
+}
+
+.api-title {
+    margin: 8px 0 16px;
+    font-size: 24px;
+    font-weight: 500;
+    color: #172B4D;
+}
+
+.api-version {
+    font-size: 14px;
+    font-weight: normal;
+    color: #6B778C;
+    margin-left: 8px;
+}
+
+.api-description {
+    margin: 16px 0;
+    font-size: 14px;
+    line-height: 1.5;
+}
+
+.api-info-table {
+    width: 100%;
+    border-collapse: collapse;
+    margin: 16px 0;
+}
+
+.api-info-table th {
+    text-align: left;
+    width: 20%;
+    padding: 8px;
+    font-weight: 500;
+    font-size: 14px;
+    color: #6B778C;
+    border: none;
+    vertical-align: top;
+}
+
+.api-info-table td {
+    padding: 8px;
+    font-size: 14px;
+    border: none;
+    vertical-align: top;
+}
+
+/* Endpoints */
+.api-endpoints h3 {
+    margin: 16px 0;
+    font-size: 20px;
+    font-weight: 500;
+    color: #172B4D;
+}
+
+.endpoint {
+    margin-bottom: 24px;
+    border: 1px solid #DFE1E6;
+    border-radius: 3px;
+    overflow: hidden;
+}
+
+.endpoint-header {
+    display: flex;
+    align-items: center;
+    padding: 12px 16px;
+    cursor: pointer;
+    background-color: #F4F5F7;
+    transition: background-color 0.2s;
+}
+
+.endpoint-header:hover {
+    background-color: #EBECF0;
+}
+
+.endpoint-details {
+    padding: 16px;
+    border-top: 1px solid #DFE1E6;
+}
+
+.http-method {
+    display: inline-block;
+    min-width: 60px;
+    padding: 4px 8px;
+    border-radius: 3px;
+    font-family: monospace;
+    font-weight: bold;
+    text-align: center;
+    font-size: 14px;
+    color: white;
+    margin-right: 12px;
+    text-transform: uppercase;
+}
+
+.get {
+    background-color: #36B37E;
+}
+
+.post {
+    background-color: #6554C0;
+}
+
+.put {
+    background-color: #00B8D9;
+}
+
+.delete {
+    background-color: #FF5630;
+}
+
+.patch {
+    background-color: #FFAB00;
+}
+
+.options, .head {
+    background-color: #6B778C;
+}
+
+.endpoint-path {
+    font-family: monospace;
+    font-size: 14px;
+    font-weight: 500;
+    word-break: break-all;
+}
+
+.deprecated-badge {
+    display: inline-block;
+    margin-left: 8px;
+    padding: 2px 4px;
+    border-radius: 3px;
+    font-size: 12px;
+    font-weight: bold;
+    color: white;
+    background-color: #FF5630;
+}
+
+.required-badge {
+    display: inline-block;
+    margin-left: 8px;
+    padding: 2px 4px;
+    border-radius: 3px;
+    font-size: 12px;
+    font-weight: bold;
+    color: white;
+    background-color: #0052CC;
+}
+
+.operation-id, .summary, .description {
+    margin-bottom: 8px;
+    font-size: 14px;
+}
+
+.summary {
+    font-weight: 500;
+}
+
+/* Tables */
+.parameters-table, .schema-table {
+    width: 100%;
+    border-collapse: collapse;
+    margin: 16px 0;
+    font-size: 14px;
+}
+
+.parameters-table thead, .schema-table thead {
+    background-color: #F4F5F7;
+}
+
+.parameters-table th, .schema-table th {
+    padding: 8px;
+    text-align: left;
+    font-weight: 500;
+    border: 1px solid #DFE1E6;
+}
+
+.parameters-table td, .schema-table td {
+    padding: 8px;
+    border: 1px solid #DFE1E6;
+}
+
+.parameters-table td:first-child, .schema-table td:first-child {
+    font-family: monospace;
+    font-weight: 500;
+}
+
+/* Sections */
+.parameters-section, .request-body-section, .responses-section {
+    margin-top: 24px;
+    margin-bottom: 24px;
+}
+
+.parameters-section h4, .request-body-section h4, .responses-section h4 {
+    margin: 16px 0;
+    font-size: 16px;
+    font-weight: 500;
+    color: #172B4D;
+}
+
+.media-type {
+    margin: 12px 0 16px;
+}
+
+.media-type h5 {
+    margin: 8px 0;
+    font-size: 14px;
+    font-weight: 500;
+    color: #172B4D;
+}
+
+/* Responses */
+.response {
+    margin-bottom: 16px;
+    border: 1px solid #DFE1E6;
+    border-radius: 3px;
+    overflow: hidden;
+}
+
+.response-header {
+    display: flex;
+    padding: 12px 16px;
+    background-color: #F4F5F7;
+    gap: 12px;
+    align-items: center;
+}
+
+.status-code {
+    font-family: monospace;
+    font-weight: bold;
+    font-size: 14px;
+}
+
+.status-success .status-code {
+    color: #36B37E;
+}
+
+.status-error .status-code {
+    color: #FF5630;
+}
+
+.status-redirect .status-code {
+    color: #FFAB00;
+}
+
+.response-description {
+    font-size: 14px;
+}
+
+/* Simple types display */
+.array-type, .simple-type {
+    margin: 8px 0;
+    padding: 8px;
+    background-color: #F4F5F7;
+    border-radius: 3px;
+    font-family: monospace;
+    font-size: 14px;
+}
+
+/* Extra styles for comment support */
+.commentable-section {
+    position: relative;
+}
+
+.comment-indicator {
+    position: absolute;
+    top: 0;
+    right: 0;
+    background-color: #0052CC;
+    color: white;
+    border-radius: 50%;
+    width: 20px;
+    height: 20px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-size: 12px;
+    cursor: pointer;
+}
+
+.endpoint.has-comments .endpoint-header {
+    border-left: 3px solid #0052CC;
+}
+
+.comment-highlight {
+    background-color: rgba(0, 82, 204, 0.1);
+}
+
+/* Table column widths */
+.parameters-table th:nth-child(1), .schema-table th:nth-child(1) {
+    width: 20%;
+}
+
+.parameters-table th:nth-child(2), .schema-table th:nth-child(2) {
+    width: 15%;
+}
+
+.parameters-table th:nth-child(3), .schema-table th:nth-child(3) {
+    width: 10%;
+}
+
+.parameters-table th:nth-child(4), .schema-table th:nth-child(4) {
+    width: 55%;
+}
+
+/* Mobile responsive */
+@media (max-width: 768px) {
+    .parameters-table, .schema-table {
+        display: block;
+        overflow-x: auto;
+    }
+}

@@ -1,0 +1,78 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<atlassian-plugin key="${project.groupId}.${project.artifactId}" name="${project.name}" plugins-version="2">
+    <plugin-info>
+        <description>${project.description}</description>
+        <version>${project.version}</version>
+        <vendor name="${project.organization.name}" url="${project.organization.url}" />
+        <param name="plugin-icon">images/pluginIcon.svg</param>
+        <param name="plugin-logo">images/pluginLogo.svg</param>
+        <param name="atlassian-data-center-compatible">true</param>
+        <param name="atlassian-data-center-status">compatible</param>
+    </plugin-info>
+
+    <!-- Resource definitions -->
+    <resource type="i18n" name="i18n" location="openapi-documentation"/>
+    
+    <!-- Web resources for the macro -->
+    <web-resource key="openapi-documentation-resources" name="OpenAPI Documentation Resources">
+        <description>CSS and JavaScript resources for the OpenAPI Documentation macro</description>
+        <resource type="download" name="openapi-documentation.css" location="/css/openapi-documentation.css"/>
+        <resource type="download" name="openapi-documentation.js" location="/js/openapi-documentation.js"/>
+        <resource type="download" name="openapi-annotations.css" location="/css/openapi-annotations.css"/>
+        <resource type="download" name="openapi-annotations.js" location="/js/openapi-annotations.js"/>
+        <resource type="download" name="images/" location="/images"/>
+        <context>atl.general</context>
+        <dependency>com.atlassian.auiplugin:ajs</dependency>
+    </web-resource>
+    
+    <!-- Web resource for the macro editor -->
+    <web-resource key="openapi-documentation-editor-resources" name="OpenAPI Documentation Editor Resources">
+        <description>Resources for the OpenAPI Documentation macro editor</description>
+        <context>openapi-documentation-editor</context>
+    </web-resource>
+    
+    <!-- Component Import -->
+    <component-import key="velocity-renderer" name="Velocity Renderer" interface="com.atlassian.templaterenderer.TemplateRenderer"/>
+    
+    <!-- The Macro -->
+    <xhtml-macro key="openapi-documentation" name="API Spec Documentation" class="com.example.confluence.macro.OpenApiMacro">
+        <description key="openapi-documentation.macro.description"/>
+        <category name="formatting"/>
+        <parameters>
+            <parameter name="spec" type="string" required="false">
+                <description key="openapi-documentation.macro.param.spec.description"/>
+            </parameter>
+            <parameter name="format" type="enum" required="false">
+                <value name="json"/>
+                <value name="yaml"/>
+                <default-value>json</default-value>
+                <description key="openapi-documentation.macro.param.format.description"/>
+            </parameter>
+        </parameters>
+        <body-type>rich-text</body-type>
+        <resource name="editor" type="velocity" location="/templates/openapi-macro-editor.vm"/>
+    </xhtml-macro>
+    
+    <!-- REST Resources -->
+    <rest key="openapi-rest" path="/openapi" version="1.0">
+        <description key="openapi-documentation.rest.description">REST endpoints for the OpenAPI Documentation plugin</description>
+        <package>com.example.confluence.rest</package>
+    </rest>
+    
+    <!-- Comments REST API -->
+    <rest key="comments-rest" path="/comments" version="1.0">
+        <description>REST endpoints for the annotation and commenting system</description>
+        <package>com.example.confluence.rest</package>
+    </rest>
+    
+    <!-- Active Objects configuration -->
+    <ao key="ao-module">
+        <description>The Active Objects module for comment storage</description>
+        <entity>com.example.confluence.ao.CommentEntity</entity>
+    </ao>
+    
+    <!-- Plugin Components -->
+    <component-import key="applicationProperties" interface="com.atlassian.sal.api.ApplicationProperties"/>
+    <component-import key="pageBuilderService" interface="com.atlassian.webresource.api.assembler.PageBuilderService"/>
+    <component-import key="userManager" interface="com.atlassian.user.UserManager"/>
+</atlassian-plugin>
