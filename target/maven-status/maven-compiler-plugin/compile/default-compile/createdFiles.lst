@@ -1,0 +1,16 @@
+com/example/confluence/rest/OpenApiResource.class
+com/example/confluence/model/Comment.class
+com/example/confluence/util/OpenApiDiffUtil.class
+com/example/confluence/service/CommentService.class
+com/example/confluence/macro/OpenApiMacro.class
+com/example/confluence/ao/ApiSpecVersionEntity.class
+com/example/confluence/ao/CommentEntity.class
+com/example/confluence/service/impl/CommentServiceImpl.class
+com/example/confluence/model/ApiSpecVersion.class
+com/example/confluence/renderer/OpenApiRenderer.class
+com/example/confluence/service/ApiSpecVersionService.class
+com/example/confluence/model/CommentResponse.class
+com/example/confluence/service/impl/ApiSpecVersionServiceImpl.class
+com/example/confluence/parser/OpenApiParser.class
+com/example/confluence/rest/CommentResource.class
+com/example/confluence/rest/ApiSpecVersionResource.class

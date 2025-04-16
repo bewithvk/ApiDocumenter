@@ -1,6 +1,6 @@
 package com.example.confluence.parser;
 
-import com.atlassian.plugin.spring.scanner.annotation.component.Scanned;
+import org.springframework.stereotype.Component;
 import com.fasterxml.jackson.databind.JsonNode;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.fasterxml.jackson.dataformat.yaml.YAMLFactory;
@@ -25,7 +25,7 @@ import java.util.Map;
 /**
  * Parser for OpenAPI specifications.
  */
-@Scanned
+@Component
 @Named
 public class OpenApiParser {
 

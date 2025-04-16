@@ -44,8 +44,8 @@ public interface CommentEntity extends Entity {
     String getAuthorAvatarUrl();
     void setAuthorAvatarUrl(String authorAvatarUrl);
     
-    Long getParentId(); // For replies, the ID of the parent comment
-    void setParentId(Long parentId);
+    Integer getParentId(); // For replies, the ID of the parent comment
+    void setParentId(Integer parentId);
     
     Integer getHighlightStartOffset(); // For annotation highlighting
     void setHighlightStartOffset(Integer highlightStartOffset);

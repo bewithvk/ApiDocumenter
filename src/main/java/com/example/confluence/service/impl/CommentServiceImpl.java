@@ -1,7 +1,7 @@
 package com.example.confluence.service.impl;
 
 import com.atlassian.activeobjects.external.ActiveObjects;
-import com.atlassian.plugin.spring.scanner.annotation.component.Scanned;
+import org.springframework.stereotype.Component;
 import com.atlassian.plugin.spring.scanner.annotation.imports.ComponentImport;
 import com.example.confluence.model.Comment;
 import com.example.confluence.service.CommentService;
@@ -20,7 +20,7 @@ import java.util.stream.Collectors;
  * Note: This implementation uses Active Objects for persistence. In a development
  * environment without AO, it falls back to an in-memory storage approach.
  */
-@Scanned
+@Component
 @Named
 public class CommentServiceImpl implements CommentService {
 
@@ -44,7 +44,7 @@ public class CommentServiceImpl implements CommentService {
         
         // Check if we have Active Objects available
         if (ao != null) {
-            CommentEntity entity = ao.get(CommentEntity.class, Long.parseLong(commentId));
+            CommentEntity entity = ao.get(CommentEntity.class, Integer.parseInt(commentId));
             if (entity != null) {
                 return convertToComment(entity);
             }
@@ -153,7 +153,7 @@ public class CommentServiceImpl implements CommentService {
                 entity.setAuthorAvatarUrl(comment.getAuthorAvatarUrl());
                 
                 if (comment.getParentId() != null) {
-                    entity.setParentId(Long.parseLong(comment.getParentId()));
+                    entity.setParentId(Integer.parseInt(comment.getParentId()));
                 }
                 
                 entity.save();
@@ -188,7 +188,7 @@ public class CommentServiceImpl implements CommentService {
         // Check if we have Active Objects available
         if (ao != null) {
             try {
-                CommentEntity entity = ao.get(CommentEntity.class, Long.parseLong(comment.getId()));
+                CommentEntity entity = ao.get(CommentEntity.class, Integer.parseInt(comment.getId()));
                 if (entity != null) {
                     entity.setContent(comment.getContent());
                     entity.setLastModified(comment.getLastModified());
@@ -222,7 +222,7 @@ public class CommentServiceImpl implements CommentService {
         // Check if we have Active Objects available
         if (ao != null) {
             try {
-                CommentEntity entity = ao.get(CommentEntity.class, Long.parseLong(commentId));
+                CommentEntity entity = ao.get(CommentEntity.class, Integer.parseInt(commentId));
                 if (entity != null) {
                     // Also delete any replies
                     CommentEntity[] replies = ao.find(CommentEntity.class, "PARENT_ID = ?", entity.getID());
@@ -322,7 +322,7 @@ public class CommentServiceImpl implements CommentService {
         if (ao != null) {
             CommentEntity[] replies = ao.find(CommentEntity.class, 
                     "PARENT_ID = ?", 
-                    Long.parseLong(comment.getId()));
+                    Integer.parseInt(comment.getId()));
             
             comment.setReplies(Arrays.stream(replies)
                     .map(this::convertToComment)

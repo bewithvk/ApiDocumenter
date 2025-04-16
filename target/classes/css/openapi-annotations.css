@@ -1,0 +1,188 @@
+/**
+ * OpenAPI Documentation Annotations CSS
+ * Styles for the annotation and commenting system
+ */
+
+/* Commentable sections */
+.commentable-section {
+    position: relative;
+    transition: background-color 0.2s ease;
+}
+
+.commentable-section:hover {
+    cursor: pointer;
+    background-color: rgba(235, 239, 243, 0.5);
+}
+
+/* Comment highlight */
+.comment-highlight {
+    background-color: rgba(222, 235, 255, 0.5) !important;
+    border-radius: 3px;
+    box-shadow: 0 0 0 1px #4c9aff;
+}
+
+/* Comment indicators */
+.comment-indicator {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    min-width: 16px;
+    height: 16px;
+    padding: 0 4px;
+    background-color: #0052CC;
+    color: white;
+    border-radius: 10px;
+    font-size: 11px;
+    font-weight: bold;
+    margin-left: 8px;
+    cursor: pointer;
+}
+
+.has-comments {
+    background-color: rgba(235, 239, 243, 0.3);
+}
+
+/* Comments panel */
+.comments-panel {
+    background-color: white;
+    border-radius: 3px;
+    box-shadow: 0 4px 8px -2px rgba(9, 30, 66, 0.25), 0 0 1px rgba(9, 30, 66, 0.31);
+    max-height: 70vh;
+    display: flex;
+    flex-direction: column;
+    border: 1px solid #DFE1E6;
+}
+
+.comments-panel-header {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    padding: 12px 16px;
+    border-bottom: 1px solid #DFE1E6;
+}
+
+.comments-panel-header h4 {
+    margin: 0;
+    font-size: 14px;
+    color: #172B4D;
+}
+
+.comment-list {
+    overflow-y: auto;
+    padding: 8px 16px;
+    flex: 1;
+    min-height: 100px;
+    max-height: 400px;
+}
+
+.comment-empty-state {
+    color: #6B778C;
+    font-style: italic;
+    padding: 16px 0;
+    text-align: center;
+}
+
+/* Comment form */
+.comment-form {
+    padding: 12px 16px;
+    border-top: 1px solid #DFE1E6;
+    display: flex;
+}
+
+.comment-form-avatar {
+    flex-shrink: 0;
+    margin-right: 12px;
+}
+
+.comment-form-avatar img {
+    width: 32px;
+    height: 32px;
+    border-radius: 50%;
+}
+
+.comment-form-body {
+    flex: 1;
+}
+
+.comment-form-body textarea {
+    width: 100%;
+    min-height: 80px;
+    padding: 8px;
+    border: 1px solid #DFE1E6;
+    border-radius: 3px;
+    resize: vertical;
+    margin-bottom: 8px;
+}
+
+.comment-form-actions {
+    display: flex;
+    justify-content: flex-end;
+}
+
+/* Comment items */
+.comment-item {
+    padding: 12px 0;
+    display: flex;
+    border-bottom: 1px solid #F4F5F7;
+}
+
+.comment-item:last-child {
+    border-bottom: none;
+}
+
+.comment-item-avatar {
+    flex-shrink: 0;
+    margin-right: 12px;
+}
+
+.comment-item-avatar img {
+    width: 32px;
+    height: 32px;
+    border-radius: 50%;
+}
+
+.comment-item-content {
+    flex: 1;
+}
+
+.comment-item-header {
+    display: flex;
+    align-items: center;
+    margin-bottom: 4px;
+}
+
+.comment-item-author {
+    font-weight: bold;
+    color: #172B4D;
+}
+
+.comment-item-time {
+    color: #6B778C;
+    font-size: 12px;
+    margin-left: 8px;
+}
+
+.comment-item-body {
+    color: #172B4D;
+    margin-bottom: 8px;
+    word-break: break-word;
+    white-space: pre-wrap;
+}
+
+.comment-item-actions {
+    display: flex;
+}
+
+.comment-item-replies {
+    margin-left: 24px;
+    margin-top: 8px;
+}
+
+/* Responsive design */
+@media (max-width: 600px) {
+    .comments-panel {
+        width: 90% !important;
+        left: 5% !important;
+        right: 5% !important;
+    }
+}

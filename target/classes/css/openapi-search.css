@@ -1,0 +1,213 @@
+/**
+ * Styles for OpenAPI Documentation Search and Filtering
+ */
+
+/* Search toolbar */
+.api-search-toolbar {
+    background-color: #f5f5f5;
+    border: 1px solid #ddd;
+    border-radius: 4px;
+    padding: 10px;
+    margin-bottom: 15px;
+    display: flex;
+    flex-wrap: wrap;
+    align-items: center;
+}
+
+/* Search field container */
+.search-field-container {
+    position: relative;
+    flex: 1;
+    min-width: 250px;
+    margin-right: 15px;
+    margin-bottom: 5px;
+}
+
+/* Search field */
+.api-search-field {
+    width: 100%;
+    padding: 8px 30px 8px 10px;
+    border: 1px solid #ccc;
+    border-radius: 4px;
+    font-size: 14px;
+}
+
+.api-search-field:focus {
+    border-color: #4a6785;
+    outline: none;
+    box-shadow: 0 0 3px rgba(74, 103, 133, 0.3);
+}
+
+/* Clear search button */
+.api-search-clear {
+    position: absolute;
+    right: 8px;
+    top: 50%;
+    transform: translateY(-50%);
+    background: none;
+    border: none;
+    color: #999;
+    font-size: 18px;
+    cursor: pointer;
+    padding: 0;
+    margin: 0;
+    width: 20px;
+    height: 20px;
+    line-height: 20px;
+    text-align: center;
+}
+
+.api-search-clear:hover {
+    color: #333;
+}
+
+/* Filter container */
+.filter-container {
+    display: flex;
+    flex-wrap: wrap;
+    margin-right: 15px;
+    margin-bottom: 5px;
+}
+
+.filter-container label {
+    margin-right: 10px;
+    font-size: 13px;
+    white-space: nowrap;
+    user-select: none;
+    cursor: pointer;
+}
+
+.filter-container input[type="checkbox"] {
+    margin-right: 3px;
+    vertical-align: middle;
+}
+
+/* Method colors for checkboxes */
+.filter-container label:has(.filter-get) {
+    color: #61affe;
+}
+
+.filter-container label:has(.filter-post) {
+    color: #49cc90;
+}
+
+.filter-container label:has(.filter-put) {
+    color: #fca130;
+}
+
+.filter-container label:has(.filter-delete) {
+    color: #f93e3e;
+}
+
+.filter-container label:has(.filter-patch) {
+    color: #50e3c2;
+}
+
+.filter-container label:has(.filter-options),
+.filter-container label:has(.filter-head) {
+    color: #555;
+}
+
+/* View toggle */
+.view-toggle {
+    display: flex;
+    flex-wrap: wrap;
+    margin-bottom: 5px;
+}
+
+.view-toggle button {
+    background-color: #f0f0f0;
+    border: 1px solid #ccc;
+    border-radius: 3px;
+    padding: 5px 10px;
+    margin-right: 5px;
+    font-size: 12px;
+    cursor: pointer;
+    transition: background-color 0.2s;
+}
+
+.view-toggle button:hover {
+    background-color: #e0e0e0;
+}
+
+/* Search metadata */
+.api-search-meta {
+    font-size: 13px;
+    margin-bottom: 15px;
+    color: #707070;
+    display: none;
+}
+
+.api-search-count {
+    font-weight: bold;
+    margin-right: 15px;
+}
+
+/* Search highlight */
+.search-highlight {
+    background-color: #fff6b8;
+    padding: 2px 0;
+    border-radius: 2px;
+}
+
+/* Collapsible endpoints */
+.endpoint {
+    margin-bottom: 10px;
+    border: 1px solid #ddd;
+    border-radius: 4px;
+    overflow: hidden;
+}
+
+.endpoint-header {
+    padding: 10px 15px;
+    cursor: pointer;
+    position: relative;
+    user-select: none;
+}
+
+.endpoint-toggle {
+    position: absolute;
+    right: 15px;
+    top: 50%;
+    transform: translateY(-50%);
+    width: 0;
+    height: 0;
+    border-left: 6px solid transparent;
+    border-right: 6px solid transparent;
+    border-top: 6px solid #666;
+    transition: transform 0.2s;
+}
+
+.endpoint.collapsed .endpoint-toggle {
+    transform: translateY(-50%) rotate(-90deg);
+}
+
+/* Hidden states */
+.endpoint.search-hidden,
+.endpoint.method-hidden,
+.endpoint.deprecated-hidden {
+    display: none;
+}
+
+.openapi-spec-container.hide-deprecated .deprecated-endpoint {
+    opacity: 0.7;
+}
+
+/* Responsive adjustments */
+@media (max-width: 768px) {
+    .api-search-toolbar {
+        flex-direction: column;
+        align-items: stretch;
+    }
+    
+    .search-field-container,
+    .filter-container,
+    .view-toggle {
+        margin-right: 0;
+        margin-bottom: 10px;
+    }
+    
+    .filter-container label {
+        margin-bottom: 5px;
+    }
+}

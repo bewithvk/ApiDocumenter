@@ -2,9 +2,10 @@ package com.example.confluence.macro;
 
 import com.atlassian.confluence.content.render.xhtml.ConversionContext;
 import com.atlassian.confluence.macro.Macro;
+import com.atlassian.confluence.macro.Macro.BodyType;
 import com.atlassian.confluence.macro.MacroExecutionException;
-import com.atlassian.plugin.spring.scanner.annotation.component.Scanned;
 import com.atlassian.plugin.spring.scanner.annotation.imports.ComponentImport;
+import org.springframework.stereotype.Component;
 import com.atlassian.webresource.api.assembler.PageBuilderService;
 import com.example.confluence.parser.OpenApiParser;
 import com.example.confluence.renderer.OpenApiRenderer;
@@ -18,7 +19,7 @@ import java.util.Map;
  * 
  * Renders OpenAPI specifications as interactive documentation in Confluence pages
  */
-@Scanned
+@Component
 @Named
 public class OpenApiMacro implements Macro {
 
@@ -85,13 +86,13 @@ public class OpenApiMacro implements Macro {
     }
 
     /**
-     * Get the name of the macro
+     * Get the body type of the macro
      *
-     * @return Name of the macro
+     * @return Body type of the macro
      */
     @Override
-    public String getBodyType() {
-        return "Rich Text";
+    public BodyType getBodyType() {
+        return BodyType.RICH_TEXT;
     }
 
     /**

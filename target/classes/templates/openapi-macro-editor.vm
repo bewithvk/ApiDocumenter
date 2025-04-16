@@ -1,0 +1,325 @@
+## OpenAPI Documentation Macro Editor Template
+<html>
+<head>
+    <meta name="decorator" content="atl.admin"/>
+    <title>$i18n.getText("openapi-documentation.macro.editor.title")</title>
+    <style type="text/css">
+        .openapi-macro-editor {
+            padding: 10px;
+        }
+        
+        .openapi-macro-editor label {
+            font-weight: bold;
+            margin-bottom: 8px;
+            display: block;
+        }
+        
+        .openapi-macro-editor .field-group {
+            margin-bottom: 16px;
+        }
+        
+        .openapi-macro-editor select,
+        .openapi-macro-editor input[type="text"],
+        .openapi-macro-editor textarea {
+            width: 100%;
+            padding: 8px;
+            border: 1px solid #DFE1E6;
+            border-radius: 3px;
+            box-sizing: border-box;
+        }
+        
+        .openapi-macro-editor textarea {
+            min-height: 250px;
+            font-family: monospace;
+            font-size: 13px;
+        }
+        
+        .openapi-macro-editor .note {
+            color: #6B778C;
+            font-size: 12px;
+            margin-top: 4px;
+        }
+        
+        .openapi-macro-editor .tabs {
+            margin-bottom: 16px;
+        }
+        
+        .openapi-macro-editor .tabs-menu {
+            display: flex;
+            border-bottom: 1px solid #DFE1E6;
+            margin-bottom: 16px;
+        }
+        
+        .openapi-macro-editor .tabs-menu-item {
+            padding: 8px 16px;
+            cursor: pointer;
+            border: 1px solid transparent;
+            border-bottom: none;
+            margin-bottom: -1px;
+        }
+        
+        .openapi-macro-editor .tabs-menu-item.active {
+            background-color: #fff;
+            border-color: #DFE1E6;
+            border-bottom-color: #fff;
+            font-weight: bold;
+        }
+        
+        .openapi-macro-editor .tab-panel {
+            display: none;
+        }
+        
+        .openapi-macro-editor .tab-panel.active {
+            display: block;
+        }
+        
+        .openapi-macro-editor .error-message {
+            color: #DE350B;
+            padding: 8px;
+            background-color: #FFEBE6;
+            border-radius: 3px;
+            margin-bottom: 16px;
+            display: none;
+        }
+        
+        .openapi-macro-editor .actions {
+            display: flex;
+            justify-content: flex-end;
+            margin-top: 16px;
+        }
+        
+        .openapi-macro-editor .actions button {
+            margin-left: 8px;
+        }
+        
+        .openapi-macro-editor .preview-container {
+            border: 1px solid #DFE1E6;
+            border-radius: 3px;
+            padding: 16px;
+            margin-top: 16px;
+            min-height: 100px;
+            max-height: 500px;
+            overflow: auto;
+            display: none;
+        }
+        
+        .openapi-macro-editor .loader {
+            text-align: center;
+            padding: 20px;
+            display: none;
+        }
+    </style>
+</head>
+
+<body>
+    <div class="openapi-macro-editor">
+        <h2>$i18n.getText("openapi-documentation.macro.editor.heading")</h2>
+        
+        <div class="error-message" id="errorMessage"></div>
+        
+        <div class="tabs">
+            <div class="tabs-menu">
+                <div class="tabs-menu-item active" data-tab="input">$i18n.getText("openapi-documentation.macro.editor.tab.input")</div>
+                <div class="tabs-menu-item" data-tab="preview">$i18n.getText("openapi-documentation.macro.editor.tab.preview")</div>
+            </div>
+            
+            <div class="tab-panel active" id="inputTab">
+                <div class="field-group">
+                    <label for="input-method">$i18n.getText("openapi-documentation.macro.editor.input.method")</label>
+                    <select id="input-method" name="input-method">
+                        <option value="paste">$i18n.getText("openapi-documentation.macro.editor.input.method.paste")</option>
+                        <option value="upload">$i18n.getText("openapi-documentation.macro.editor.input.method.upload")</option>
+                    </select>
+                </div>
+                
+                <div id="paste-input" class="field-group">
+                    <label for="spec-content">$i18n.getText("openapi-documentation.macro.editor.spec.content")</label>
+                    <textarea id="spec-content" name="spec-content" placeholder="$i18n.getText("openapi-documentation.macro.editor.spec.content.placeholder")"></textarea>
+                    <div class="note">$i18n.getText("openapi-documentation.macro.editor.spec.content.note")</div>
+                </div>
+                
+                <div id="upload-input" class="field-group" style="display: none;">
+                    <label for="spec-file">$i18n.getText("openapi-documentation.macro.editor.spec.file")</label>
+                    <input type="file" id="spec-file" name="spec-file" accept=".json,.yaml,.yml" />
+                    <div class="note">$i18n.getText("openapi-documentation.macro.editor.spec.file.note")</div>
+                </div>
+                
+                <div class="field-group">
+                    <label for="spec-format">$i18n.getText("openapi-documentation.macro.editor.spec.format")</label>
+                    <select id="spec-format" name="spec-format">
+                        <option value="auto">$i18n.getText("openapi-documentation.macro.editor.spec.format.auto")</option>
+                        <option value="json">$i18n.getText("openapi-documentation.macro.editor.spec.format.json")</option>
+                        <option value="yaml">$i18n.getText("openapi-documentation.macro.editor.spec.format.yaml")</option>
+                    </select>
+                </div>
+            </div>
+            
+            <div class="tab-panel" id="previewTab">
+                <div class="loader" id="previewLoader">
+                    <img src="${req.contextPath}/images/icons/wait.gif" alt="Loading..." />
+                    <p>$i18n.getText("openapi-documentation.macro.editor.preview.loading")</p>
+                </div>
+                <div class="preview-container" id="previewContainer"></div>
+            </div>
+        </div>
+        
+        <div class="actions">
+            <button class="aui-button aui-button-primary" id="insertButton">$i18n.getText("openapi-documentation.macro.editor.button.insert")</button>
+            <button class="aui-button" id="previewButton">$i18n.getText("openapi-documentation.macro.editor.button.preview")</button>
+            <button class="aui-button" id="cancelButton">$i18n.getText("openapi-documentation.macro.editor.button.cancel")</button>
+        </div>
+    </div>
+    
+    <script type="text/javascript">
+        AJS.toInit(function($) {
+            // Tab switching
+            $('.tabs-menu-item').click(function() {
+                $('.tabs-menu-item').removeClass('active');
+                $(this).addClass('active');
+                
+                var tabId = $(this).data('tab');
+                $('.tab-panel').removeClass('active');
+                $('#' + tabId + 'Tab').addClass('active');
+                
+                if (tabId === 'preview') {
+                    generatePreview();
+                }
+            });
+            
+            // Toggle between paste and upload
+            $('#input-method').change(function() {
+                var method = $(this).val();
+                
+                if (method === 'paste') {
+                    $('#paste-input').show();
+                    $('#upload-input').hide();
+                } else {
+                    $('#paste-input').hide();
+                    $('#upload-input').show();
+                }
+            });
+            
+            // File upload handling
+            $('#spec-file').change(function() {
+                var file = this.files[0];
+                if (file) {
+                    var reader = new FileReader();
+                    reader.onload = function(e) {
+                        $('#spec-content').val(e.target.result);
+                        
+                        // Auto-detect format based on file extension
+                        var filename = file.name.toLowerCase();
+                        if (filename.endsWith('.json')) {
+                            $('#spec-format').val('json');
+                        } else if (filename.endsWith('.yaml') || filename.endsWith('.yml')) {
+                            $('#spec-format').val('yaml');
+                        }
+                    };
+                    reader.readAsText(file);
+                }
+            });
+            
+            // Preview button
+            $('#previewButton').click(function() {
+                $('.tabs-menu-item[data-tab="preview"]').click();
+            });
+            
+            // Generate preview
+            function generatePreview() {
+                var specContent = $('#spec-content').val();
+                var format = $('#spec-format').val();
+                
+                // Skip if no content
+                if (!specContent || specContent.trim() === '') {
+                    $('#errorMessage').text('$i18n.getText("openapi-documentation.macro.editor.error.no-content")').show();
+                    return;
+                }
+                
+                // Auto-detect format if set to auto
+                if (format === 'auto') {
+                    if (specContent.trim().startsWith('{')) {
+                        format = 'json';
+                    } else {
+                        format = 'yaml';
+                    }
+                }
+                
+                // Show loading indicator
+                $('#errorMessage').hide();
+                $('#previewContainer').hide();
+                $('#previewLoader').show();
+                
+                // Call REST API to render spec
+                AJS.$.ajax({
+                    url: AJS.contextPath() + '/rest/openapi/1.0/render',
+                    type: 'POST',
+                    contentType: 'application/json',
+                    data: JSON.stringify({
+                        spec: specContent,
+                        format: format
+                    }),
+                    success: function(response) {
+                        $('#previewLoader').hide();
+                        $('#previewContainer').html(response).show();
+                    },
+                    error: function(xhr) {
+                        $('#previewLoader').hide();
+                        
+                        // Parse error message from response if available
+                        var errorMessage = '$i18n.getText("openapi-documentation.macro.editor.error.general")';
+                        try {
+                            var responseData = JSON.parse(xhr.responseText);
+                            if (responseData && responseData.error) {
+                                errorMessage = responseData.error;
+                            }
+                        } catch (e) {
+                            // Use default error message
+                        }
+                        
+                        $('#errorMessage').text(errorMessage).show();
+                    }
+                });
+            }
+            
+            // Insert macro
+            $('#insertButton').click(function() {
+                var specContent = $('#spec-content').val();
+                var format = $('#spec-format').val();
+                
+                // Validate
+                if (!specContent || specContent.trim() === '') {
+                    $('#errorMessage').text('$i18n.getText("openapi-documentation.macro.editor.error.no-content")').show();
+                    return;
+                }
+                
+                // Create macro params
+                var macroParams = {
+                    'format': format === 'auto' ? '' : format
+                };
+                
+                // Add spec to body or parameters based on size
+                if (specContent.length > 1000) {
+                    // For larger specs, use the macro body
+                    window.Confluence.Editor.MacroEditor.insert({
+                        name: 'openapi-documentation',
+                        params: macroParams,
+                        body: specContent
+                    });
+                } else {
+                    // For smaller specs, use parameters
+                    macroParams.spec = specContent;
+                    window.Confluence.Editor.MacroEditor.insert({
+                        name: 'openapi-documentation',
+                        params: macroParams
+                    });
+                }
+            });
+            
+            // Cancel button
+            $('#cancelButton').click(function() {
+                window.Confluence.Editor.MacroEditor.cancel();
+            });
+        });
+    </script>
+</body>
+</html>

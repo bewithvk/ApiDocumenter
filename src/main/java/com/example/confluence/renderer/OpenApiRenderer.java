@@ -1,7 +1,8 @@
 package com.example.confluence.renderer;
 
-import com.atlassian.plugin.spring.scanner.annotation.component.Scanned;
+import org.springframework.stereotype.Component;
 
+import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
 import java.util.UUID;
@@ -9,7 +10,7 @@ import java.util.UUID;
 /**
  * Renders OpenAPI specifications as HTML.
  */
-@Scanned
+@Component
 public class OpenApiRenderer {
 
     /**
@@ -22,13 +23,24 @@ public class OpenApiRenderer {
         
         // Add container div with unique ID for JavaScript interaction
         String containerId = "openapi-spec-" + UUID.randomUUID().toString().replace("-", "");
-        html.append("<div id=\"").append(containerId).append("\" class=\"openapi-spec-container\">");
+        html.append("<div id=\"").append(containerId).append("\" class=\"openapi-spec-container\" data-searchable=\"true\">");
         
         // Render API info
         html.append(renderApiInfo(parsedSpec));
         
         // Render endpoints
         html.append(renderEndpoints(parsedSpec));
+        
+        // Add attribution and version info for the search system to pick up
+        @SuppressWarnings("unchecked")
+        Map<String, Object> info = (Map<String, Object>) parsedSpec.get("info");
+        if (info != null) {
+            html.append("<div class=\"api-search-metadata\" style=\"display: none;\">");
+            html.append("<span data-title=\"").append(escapeHtml(String.valueOf(info.getOrDefault("title", "API Documentation")))).append("\"></span>");
+            html.append("<span data-version=\"").append(escapeHtml(String.valueOf(info.getOrDefault("version", "")))).append("\"></span>");
+            html.append("<span data-openapi-version=\"").append(escapeHtml(String.valueOf(parsedSpec.getOrDefault("openapi", "")))).append("\"></span>");
+            html.append("</div>");
+        }
         
         // Close container div
         html.append("</div>");
@@ -147,7 +159,13 @@ public class OpenApiRenderer {
                 // Generate unique ID for this endpoint for comments targeting
                 String endpointId = "endpoint-" + UUID.randomUUID().toString().replace("-", "");
                 
-                html.append("<div class=\"endpoint\" id=\"").append(endpointId).append("\">");
+                // Add data attributes for filtering and searching
+                html.append("<div class=\"endpoint\" id=\"").append(endpointId).append("\"")
+                    .append(" data-method=\"").append(method.toLowerCase()).append("\"")
+                    .append(" data-path=\"").append(escapeHtml(path)).append("\"")
+                    .append(" data-operation-id=\"").append(escapeHtml(operationId)).append("\"")
+                    .append(" data-deprecated=\"").append(deprecated).append("\"")
+                    .append(">");
                 
                 // Endpoint header
                 html.append("<div class=\"endpoint-header method-").append(method.toLowerCase()).append("\">");
