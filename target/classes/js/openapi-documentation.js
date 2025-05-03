@@ -12,6 +12,29 @@ AJS.toInit(function($) {
         setupExpandableEndpoints();
         setupCommentingIntegration();
         addCommentIndicators();
+        integrateSearchAndFilter();
+    }
+    
+    /**
+     * Integrate with the search and filtering system
+     * Makes sure search functionality is properly initialized
+     */
+    function integrateSearchAndFilter() {
+        // Check if search system is already loaded
+        if (window.ApiSearch && typeof window.ApiSearch.initialize === 'function') {
+            console.log('OpenAPI search system detected, integrating...');
+            
+            // The search system will self-initialize, but let's make sure it has our latest data
+            $('.openapi-spec-container[data-searchable="true"]').each(function() {
+                var $container = $(this);
+                
+                // Add searchable attribute to all important elements
+                $container.find('.endpoint-path, .operation-id, .summary, .description, td').attr('data-searchable', 'true');
+                
+                // Add search specific classes for styling
+                $container.find('.endpoint').addClass('searchable-endpoint');
+            });
+        }
     }
     
     /**

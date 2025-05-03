@@ -162,6 +162,25 @@
     background-color: #0052CC;
 }
 
+/* Tags styling */
+.endpoint-tags {
+    display: flex;
+    flex-wrap: wrap;
+    margin-top: 6px;
+}
+
+.tag-badge {
+    display: inline-block;
+    margin-right: 5px;
+    margin-bottom: 3px;
+    padding: 2px 6px;
+    border-radius: 3px;
+    font-size: 11px;
+    background-color: #E2EFFF;
+    color: #0052CC;
+    border: 1px solid #DEEBFF;
+}
+
 .operation-id, .summary, .description {
     margin-bottom: 8px;
     font-size: 14px;

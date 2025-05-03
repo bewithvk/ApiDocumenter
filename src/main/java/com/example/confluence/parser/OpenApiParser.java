@@ -73,7 +73,33 @@ public class OpenApiParser {
         
         // Basic API info
         result.put("openapi", openAPI.getOpenapi());
-        result.put("info", openAPI.getInfo());
+        
+        // Convert Info object to Map
+        Map<String, Object> infoMap = new HashMap<>();
+        if (openAPI.getInfo() != null) {
+            infoMap.put("title", openAPI.getInfo().getTitle());
+            infoMap.put("version", openAPI.getInfo().getVersion());
+            infoMap.put("description", openAPI.getInfo().getDescription());
+            infoMap.put("termsOfService", openAPI.getInfo().getTermsOfService());
+            
+            // Convert contact info if present
+            if (openAPI.getInfo().getContact() != null) {
+                Map<String, Object> contactMap = new HashMap<>();
+                contactMap.put("name", openAPI.getInfo().getContact().getName());
+                contactMap.put("url", openAPI.getInfo().getContact().getUrl());
+                contactMap.put("email", openAPI.getInfo().getContact().getEmail());
+                infoMap.put("contact", contactMap);
+            }
+            
+            // Convert license info if present
+            if (openAPI.getInfo().getLicense() != null) {
+                Map<String, Object> licenseMap = new HashMap<>();
+                licenseMap.put("name", openAPI.getInfo().getLicense().getName());
+                licenseMap.put("url", openAPI.getInfo().getLicense().getUrl());
+                infoMap.put("license", licenseMap);
+            }
+        }
+        result.put("info", infoMap);
         
         // Extract paths and operations
         List<Map<String, Object>> paths = new ArrayList<>();

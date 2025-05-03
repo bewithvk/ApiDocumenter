@@ -30,8 +30,9 @@
                 // Create search toolbar
                 var searchToolbar = $('<div class="api-search-toolbar">' +
                     '<div class="search-field-container">' +
-                    '<input type="text" class="api-search-field" placeholder="Search endpoints, parameters, descriptions...">' +
-                    '<button class="api-search-clear">×</button>' +
+                    '<input type="text" class="api-search-field" placeholder="Search or use operators like method:get path:/users..." title="Press Ctrl+F (or Cmd+F) to focus, Esc to clear search">' +
+                    '<button class="api-search-clear" title="Clear search">×</button>' +
+                    '<span class="search-tips" title="Click for search help">?</span>' +
                     '</div>' +
                     '<div class="filter-container">' +
                     '<label><input type="checkbox" class="filter-get" checked> GET</label>' +
@@ -41,6 +42,9 @@
                     '<label><input type="checkbox" class="filter-patch" checked> PATCH</label>' +
                     '<label><input type="checkbox" class="filter-options" checked> OPTIONS</label>' +
                     '<label><input type="checkbox" class="filter-head" checked> HEAD</label>' +
+                    '<select class="filter-tags" title="Filter by tags">' +
+                    '<option value="">All Tags</option>' +
+                    '</select>' +
                     '</div>' +
                     '<div class="view-toggle">' +
                     '<button class="toggle-deprecated">Toggle Deprecated</button>' +
@@ -63,6 +67,37 @@
                 if (!container.hasClass('collapsible-initialized')) {
                     ApiSearch.makeEndpointsCollapsible(container);
                     container.addClass('collapsible-initialized');
+                }
+                
+                // Add a help tooltip for keyboard shortcuts and search operators
+                if (typeof AJS !== 'undefined' && AJS.tipsy) {
+                    searchToolbar.find('.search-tips').tipsy({
+                        gravity: 's',
+                        html: true,
+                        title: function() {
+                            return '<div class="search-shortcuts-help">' +
+                                '<p><strong>Keyboard Shortcuts:</strong></p>' +
+                                '<ul>' +
+                                '<li><strong>Ctrl+F</strong> or <strong>Cmd+F</strong>: Focus search</li>' +
+                                '<li><strong>Escape</strong>: Clear search</li>' +
+                                '</ul>' +
+                                '<p><strong>Advanced Search Operators:</strong></p>' +
+                                '<ul>' +
+                                '<li><strong>method:</strong>get|post|put|delete|patch</li>' +
+                                '<li><strong>path:</strong>/some/endpoint</li>' +
+                                '<li><strong>param:</strong>parameter_name</li>' +
+                                '<li><strong>type:</strong>string|integer|array|object</li>' +
+                                '<li><strong>status:</strong>200|404|500</li>' +
+                                '<li><strong>deprecated:</strong>true|false</li>' +
+                                '<li><strong>required:</strong>true|false</li>' +
+                                '<li><strong>tag:</strong>tag_name</li>' +
+                                '<li><strong>format:</strong>uuid|date-time|email|etc</li>' +
+                                '<li><strong>summary:</strong>search in summary text</li>' +
+                                '</ul>' +
+                                '<p><em>Example: <code>method:get path:/users</code></em></p>' +
+                                '</div>';
+                        }
+                    });
                 }
             });
         },
@@ -126,6 +161,13 @@
                 ApiSearch.applyMethodFilters(container);
             });
             
+            // Tag filter
+            $(document).on('change', '.filter-tags', function() {
+                var container = $(this).closest('.openapi-spec-container');
+                var selectedTag = $(this).val();
+                ApiSearch.applyTagFilter(container, selectedTag);
+            });
+            
             // Toggle deprecated endpoints
             $(document).on('click', '.toggle-deprecated', function() {
                 var container = $(this).closest('.openapi-spec-container');
@@ -144,6 +186,34 @@
                 var container = $(this).closest('.openapi-spec-container');
                 ApiSearch.collapseAllEndpoints(container);
             });
+            
+            // Add keyboard shortcuts
+            $(document).on('keydown', function(e) {
+                // Focus search field on Ctrl+F or Command+F
+                if ((e.ctrlKey || e.metaKey) && e.keyCode === 70) {
+                    // Check if we're in an OpenAPI documentation container
+                    var $container = $('.openapi-spec-container:visible');
+                    if ($container.length > 0) {
+                        e.preventDefault(); // Prevent browser's default search
+                        var $searchField = $container.find('.api-search-field:first');
+                        if ($searchField.length > 0) {
+                            $searchField.focus();
+                            $searchField.select(); // Select all text in the field if any
+                        }
+                    }
+                }
+                
+                // Clear search on Escape
+                if (e.keyCode === 27) {
+                    var $searchField = $('.api-search-field:focus');
+                    if ($searchField.length > 0) {
+                        var $container = $searchField.closest('.openapi-spec-container');
+                        $searchField.val('');
+                        ApiSearch.performSearch($container, '');
+                        $searchField.blur(); // Remove focus
+                    }
+                }
+            });
         },
         
         /**
@@ -153,6 +223,7 @@
             $('.openapi-spec-container').each(function() {
                 var container = $(this);
                 var endpoints = container.find('.endpoint');
+                var allTags = new Set();
                 
                 endpoints.each(function() {
                     var endpoint = $(this);
@@ -173,7 +244,28 @@
                     if (isDeprecated) {
                         endpoint.addClass('deprecated-endpoint');
                     }
+                    
+                    // Collect tags for the tag filter dropdown
+                    var tags = endpoint.data('tags');
+                    if (tags) {
+                        tags.split(',').forEach(function(tag) {
+                            allTags.add(tag.trim());
+                        });
+                    }
                 });
+                
+                // Populate the tag filter dropdown if we have tags
+                if (allTags.size > 0) {
+                    var tagDropdown = container.find('.filter-tags');
+                    var tagArray = Array.from(allTags).sort();
+                    
+                    tagArray.forEach(function(tag) {
+                        tagDropdown.append('<option value="' + tag + '">' + tag + '</option>');
+                    });
+                    
+                    // Show the tag filter
+                    container.find('.filter-tags').closest('select').show();
+                }
             });
         },
         
@@ -195,21 +287,40 @@
                 return;
             }
             
-            // Convert query to lowercase for case-insensitive matching
-            query = query.toLowerCase();
+            // Check for advanced search operators
+            var advancedSearch = this.parseAdvancedQuery(query);
+            var useAdvancedSearch = advancedSearch.hasOperators;
+            
+            // Convert query to lowercase for case-insensitive matching if not using advanced search
+            if (!useAdvancedSearch) {
+                query = query.toLowerCase();
+            }
             
             // Filter endpoints by search query
             endpoints.each(function() {
                 var endpoint = $(this);
-                var searchText = endpoint.data('searchText');
+                var match = false;
                 
-                if (searchText.indexOf(query) !== -1) {
+                if (useAdvancedSearch) {
+                    // Use advanced search logic
+                    match = ApiSearch.matchAdvancedSearch(endpoint, advancedSearch);
+                } else {
+                    // Use simple text search
+                    var searchText = endpoint.data('searchText');
+                    match = searchText.indexOf(query) !== -1;
+                }
+                
+                if (match) {
                     endpoint.removeClass('search-hidden');
                     endpoint.addClass('expanded').removeClass('collapsed');
                     endpoint.find('.endpoint-details').show();
                     
-                    // Highlight search terms
-                    ApiSearch.highlightSearchTerms(endpoint, query);
+                    // Highlight search terms (for non-operator part if advanced search)
+                    if (useAdvancedSearch && advancedSearch.freeText) {
+                        ApiSearch.highlightSearchTerms(endpoint, advancedSearch.freeText);
+                    } else if (!useAdvancedSearch) {
+                        ApiSearch.highlightSearchTerms(endpoint, query);
+                    }
                     
                     visibleCount++;
                 } else {
@@ -226,6 +337,151 @@
             
             // Re-apply method filters
             this.applyMethodFilters(container);
+        },
+        
+        /**
+         * Parse an advanced search query with operators
+         * Supports operators like method:get, path:/users, etc.
+         */
+        parseAdvancedQuery: function(query) {
+            var result = {
+                hasOperators: false,
+                freeText: '',
+                operators: {}
+            };
+            
+            // Define supported operators
+            var supportedOperators = [
+                'method', 'path', 'param', 'type', 'response', 'deprecated',
+                'status', 'code', 'tag', 'tags', 'required', 'summary', 'format'
+            ];
+            
+            // Look for operator:value patterns
+            var parts = query.split(/\s+/);
+            var freeTextParts = [];
+            
+            for (var i = 0; i < parts.length; i++) {
+                var part = parts[i];
+                var match = part.match(/^([a-z]+):(.+)$/i);
+                
+                if (match && supportedOperators.indexOf(match[1].toLowerCase()) !== -1) {
+                    // This is an operator
+                    var operator = match[1].toLowerCase();
+                    var value = match[2].toLowerCase();
+                    
+                    // Handle special values
+                    if (value === 'true' || value === 'yes') {
+                        value = true;
+                    } else if (value === 'false' || value === 'no') {
+                        value = false;
+                    }
+                    
+                    result.operators[operator] = value;
+                    result.hasOperators = true;
+                } else {
+                    // This is free text
+                    freeTextParts.push(part);
+                }
+            }
+            
+            result.freeText = freeTextParts.join(' ').toLowerCase();
+            
+            return result;
+        },
+        
+        /**
+         * Match an endpoint against advanced search criteria
+         */
+        matchAdvancedSearch: function(endpoint, search) {
+            var operators = search.operators;
+            var freeText = search.freeText;
+            
+            // First check free text if exists
+            if (freeText && endpoint.data('searchText').indexOf(freeText) === -1) {
+                return false;
+            }
+            
+            // Check each operator
+            for (var op in operators) {
+                var value = operators[op];
+                var match = false;
+                
+                switch (op) {
+                    case 'method':
+                        // Match HTTP method
+                        match = endpoint.data('method') === value;
+                        break;
+                        
+                    case 'path':
+                        // Match path
+                        var path = endpoint.find('.endpoint-path').text().toLowerCase();
+                        match = path.indexOf(value) !== -1;
+                        break;
+                        
+                    case 'param':
+                    case 'parameter':
+                        // Match parameter name
+                        match = endpoint.find('.parameters-table td:first-child').text().toLowerCase().indexOf(value) !== -1;
+                        break;
+                        
+                    case 'type':
+                        // Match parameter or response type
+                        match = endpoint.find('td:nth-child(2), td:nth-child(3)').text().toLowerCase().indexOf(value) !== -1;
+                        break;
+                        
+                    case 'response':
+                    case 'status':
+                    case 'code':
+                        // Match response status code
+                        match = endpoint.find('.status-code').text().toLowerCase().indexOf(value) !== -1;
+                        break;
+                        
+                    case 'deprecated':
+                        // Match deprecated status
+                        var isDeprecated = endpoint.data('deprecated');
+                        match = (value === true && isDeprecated) || (value === false && !isDeprecated);
+                        break;
+                        
+                    case 'required':
+                        // Match required parameters
+                        if (value === true) {
+                            match = endpoint.find('td:nth-child(4)').text().toLowerCase().indexOf('yes') !== -1;
+                        } else {
+                            match = endpoint.find('td:nth-child(4)').text().toLowerCase().indexOf('no') !== -1;
+                        }
+                        break;
+                        
+                    case 'tag':
+                    case 'tags':
+                        // Match against API tags
+                        var tags = endpoint.data('tags');
+                        if (tags) {
+                            match = tags.toLowerCase().indexOf(value) !== -1;
+                        }
+                        break;
+                        
+                    case 'summary':
+                        // Match against endpoint summary
+                        var summary = endpoint.data('summary');
+                        if (summary) {
+                            match = summary.toLowerCase().indexOf(value) !== -1;
+                        }
+                        break;
+                        
+                    case 'format':
+                        // Match parameter format
+                        match = endpoint.find('[data-format]').filter(function() {
+                            return $(this).data('format').toLowerCase().indexOf(value) !== -1;
+                        }).length > 0;
+                        break;
+                }
+                
+                if (!match) {
+                    return false;
+                }
+            }
+            
+            return true;
         },
         
         /**
@@ -351,6 +607,29 @@
                 endpoint.removeClass('expanded').addClass('collapsed');
                 endpoint.find('.endpoint-details').slideUp(200);
             });
+        },
+        
+        /**
+         * Apply tag filter
+         */
+        applyTagFilter: function(container, selectedTag) {
+            var endpoints = container.find('.endpoint:not(.search-hidden):not(.method-hidden):not(.deprecated-hidden)');
+            
+            if (selectedTag) {
+                endpoints.each(function() {
+                    var endpoint = $(this);
+                    var tags = endpoint.data('tags');
+                    
+                    if (tags && tags.indexOf(selectedTag) !== -1) {
+                        endpoint.removeClass('tag-hidden');
+                    } else {
+                        endpoint.addClass('tag-hidden');
+                    }
+                });
+            } else {
+                // No tag selected, show all
+                endpoints.removeClass('tag-hidden');
+            }
         }
     };
     

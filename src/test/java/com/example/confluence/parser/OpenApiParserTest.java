@@ -52,7 +52,7 @@ public class OpenApiParserTest {
         assertNotNull(result);
         assertEquals("3.0.0", result.get("openapi"));
         
-        // Verify info section
+        // Verify info section - should be a Map after our convertToRendererFormat method fix
         @SuppressWarnings("unchecked")
         Map<String, Object> info = (Map<String, Object>) result.get("info");
         assertNotNull(info);
@@ -105,7 +105,7 @@ public class OpenApiParserTest {
         assertNotNull(result);
         assertEquals("3.0.0", result.get("openapi"));
         
-        // Verify info section
+        // Verify info section - should be a Map after our convertToRendererFormat method fix
         @SuppressWarnings("unchecked")
         Map<String, Object> info = (Map<String, Object>) result.get("info");
         assertNotNull(info);

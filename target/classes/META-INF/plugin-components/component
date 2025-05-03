@@ -1,0 +1,7 @@
+com.example.confluence.macro.OpenApiMacro
+com.example.confluence.parser.OpenApiParser
+com.example.confluence.renderer.OpenApiRenderer
+com.example.confluence.rest.ApiSpecVersionResource
+com.example.confluence.rest.CommentResource
+com.example.confluence.service.impl.ApiSpecVersionServiceImpl
+com.example.confluence.service.impl.CommentServiceImpl

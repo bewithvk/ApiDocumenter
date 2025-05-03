@@ -4,7 +4,6 @@ modules = ["nodejs-20", "java-17"]
 channel = "stable-24_05"
 
 [workflows]
-runButton = "Project"
 
 [[workflows.workflow]]
 name = "Project"
@@ -14,6 +13,10 @@ author = "agent"
 [[workflows.workflow.tasks]]
 task = "workflow.run"
 args = "Compile"
+
+[[workflows.workflow.tasks]]
+task = "workflow.run"
+args = "Maven Package"
 
 [[workflows.workflow]]
 name = "Compile"
@@ -28,6 +31,20 @@ task = "packager.installForAll"
 [[workflows.workflow.tasks]]
 task = "shell.exec"
 args = "mvn clean compile"
+
+[[workflows.workflow]]
+name = "Maven Package"
+author = "agent"
+
+[workflows.workflow.metadata]
+agentRequireRestartOnSave = false
+
+[[workflows.workflow.tasks]]
+task = "packager.installForAll"
+
+[[workflows.workflow.tasks]]
+task = "shell.exec"
+args = "mvn package"
 
 [deployment]
 run = ["sh", "-c", "node index.js"]
