@@ -46,5 +46,18 @@ task = "packager.installForAll"
 task = "shell.exec"
 args = "mvn package"
 
+[[workflows.workflow]]
+name = "Run Plugin"
+mode = "sequential"
+author = 41573869
+
+[[workflows.workflow.tasks]]
+task = "workflow.run"
+args = "Maven Package"
+
+[[workflows.workflow.tasks]]
+task = "shell.exec"
+args = "atlas-run"
+
 [deployment]
 run = ["sh", "-c", "node index.js"]

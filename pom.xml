@@ -18,16 +18,24 @@
     <description>A Confluence Data Center plugin that transforms OpenAPI specifications into collaborative, tabular documentation with inline commenting capabilities</description>
     <packaging>jar</packaging>
 
-    <properties>
-        <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
-        <maven.compiler.source>1.8</maven.compiler.source>
-        <maven.compiler.target>1.8</maven.compiler.target>
-        <confluence.version>7.13.0</confluence.version>
-        <confluence.data.version>7.13.0</confluence.data.version>
-        <atlassian.spring.scanner.version>2.2.0</atlassian.spring.scanner.version>
+     <properties>
+        <confluence.version>8.5.6</confluence.version>
+        <confluence.data.version>8.5.6</confluence.data.version>
+        <amps.version>9.1.1</amps.version>
+        <plugin.testrunner.version>2.0.2</plugin.testrunner.version>
+        <atlassian.spring.scanner.version>3.0.2</atlassian.spring.scanner.version>
+        <spring.version>4.2.5.RELEASE</spring.version>
+        <upm.license.compatibility.version>2.15.3</upm.license.compatibility.version>
+        <!-- This property ensures consistency between the key in atlassian-plugin.xml and the OSGi bundle's key. -->
+        <atlassian.plugin.key>${project.groupId}.${project.artifactId}</atlassian.plugin.key>
         <swagger.parser.version>2.1.10</swagger.parser.version>
         <junit.version>4.13.1</junit.version>
-    </properties>
+        <testkit.version>6.3.11</testkit.version>
+        <relationship.version>0.0.1</relationship.version>
+        <maven.compiler.source>11</maven.compiler.source>
+        <maven.compiler.target>11</maven.compiler.target>
+        <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
+      </properties>
 
     <dependencyManagement>
         <dependencies>
@@ -139,37 +147,71 @@
     <build>
         <plugins>
             <plugin>
-                <groupId>org.apache.maven.plugins</groupId>
-                <artifactId>maven-compiler-plugin</artifactId>
-                <version>3.8.1</version>
+                <groupId>com.atlassian.maven.plugins</groupId>
+                <artifactId>confluence-maven-plugin</artifactId>
+                <version>${amps.version}</version>
+                <extensions>true</extensions>
                 <configuration>
-                    <source>${maven.compiler.source}</source>
-                    <target>${maven.compiler.target}</target>
+                  <jvmArgs>-Xms1g -Xmx1g -XX:-UseGCOverheadLimit -server</jvmArgs>
+                  <productVersion>${confluence.version}</productVersion>
+                  <productDataVersion>${confluence.data.version}</productDataVersion>
+                  <compressResources>false</compressResources>
+                  <enableQuickReload>true</enableQuickReload>
+                  <skipRestDocGeneration>true</skipRestDocGeneration>
+                  <allowGoogleTracking>false</allowGoogleTracking>
+                  <skipManifestValidation>true</skipManifestValidation>
+                  <extractDependencies>false</extractDependencies>
+                  <compressResources>false</compressResources>
+                  <skipAllPrompts>true</skipAllPrompts>
+                  <systemPropertyVariables>
+                    <synchrony.proxy.enabled>false</synchrony.proxy.enabled>
+                    <synchrony.proxy.healthcheck.disabled>true</synchrony.proxy.healthcheck.disabled>
+                    <atlassian.darkfeature.site-wide.synchrony.opt-in.disable>true</atlassian.darkfeature.site-wide.synchrony.opt-in.disable>
+                    <atlassian.darkfeature.site-wide.shared-drafts.disable>true</atlassian.darkfeature.site-wide.shared-drafts.disable>
+                    <atlassian.disable.caches>true</atlassian.disable.caches>
+                    <atlassian.webresource.disable.minification>true
+                    </atlassian.webresource.disable.minification>
+                    <password.confirmation.disabled>true</password.confirmation.disabled>
+                    <atlassian.dev.mode>false</atlassian.dev.mode>
+                    <upm.plugin.upload.enabled>true</upm.plugin.upload.enabled>
+                  </systemPropertyVariables>
+
+                  <!-- See here for an explanation of default instructions: -->
+                  <!-- https://developer.atlassian.com/docs/advanced-topics/configuration-of-instructions-in-atlassian-plugins -->
+                  <instructions>
+                    <Atlassian-Plugin-Key>${atlassian.plugin.key}</Atlassian-Plugin-Key>
+                    <!-- Add package to export here -->
+                    <Export-Package></Export-Package>
+                    <!-- Add package import here -->
+                    <Import-Package>
+                      org.springframework.osgi.*;resolution:="optional",
+                      org.eclipse.gemini.blueprint.*;resolution:="optional",
+                      com.fasterxml.jackson.databind.*;resolution:="optional",
+                      *
+                    </Import-Package>
+                    <!-- Ensure plugin is spring powered -->
+                    <Spring-Context>*</Spring-Context>
+                  </instructions>
+                  <banningExcludes>
+                    <exclude> org.apache.commons:commons-lang3:jar:3.12.0</exclude>
+                    <exclude>org.jdom:jdom2:jar:2.0.6.1</exclude>
+                    <exclude>org.jsoup:jsoup:jar:1.8.3</exclude>
+                  </banningExcludes>
                 </configuration>
-            </plugin>
-            <plugin>
+              </plugin>
+              <plugin>
                 <groupId>com.atlassian.plugin</groupId>
                 <artifactId>atlassian-spring-scanner-maven-plugin</artifactId>
                 <version>${atlassian.spring.scanner.version}</version>
                 <executions>
-                    <execution>
-                        <goals>
-                            <goal>atlassian-spring-scanner</goal>
-                        </goals>
-                        <phase>process-classes</phase>
-                    </execution>
+                  <execution>
+                    <goals>
+                      <goal>atlassian-spring-scanner</goal>
+                    </goals>
+                    <phase>process-classes</phase>
+                  </execution>
                 </executions>
-                <configuration>
-                    <scannedDependencies>
-                        <dependency>
-                            <groupId>com.atlassian.plugin</groupId>
-                            <artifactId>atlassian-spring-scanner-annotation</artifactId>
-                            <version>${atlassian.spring.scanner.version}</version>
-                        </dependency>
-                    </scannedDependencies>
-                    <verbose>false</verbose>
-                </configuration>
-            </plugin>
+              </plugin>
         </plugins>
     </build>
 
